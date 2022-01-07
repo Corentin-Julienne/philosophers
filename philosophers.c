@@ -6,79 +6,67 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:04 by cjulienn          #+#    #+#             */
-/*   Updated: 2021/12/29 17:18:28 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/07 16:38:37 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	*timer(t_sim *sim)
+int	init_monitoring_threads(t_sim *sim)
 {
-	struct timeval	*timer;
+	pthread_t			*chronometer;
+	pthread_t			*monitor_meals;
 
-	while (42)
+	pthread_create(chronometer, NULL, &chrono, &sim);
+	if (sim->win_cond != -1)
+		pthread_create(monitor_meals, NULL, &victory_routine, &sim);
+	sim->chronometer = chronometer;
+	sim->monitor_meals = monitor_meals;
+	return (0);
+}
+
+int	init_philos_threads(t_sim *sim)
+{
+	t_phi				*phis;
+	long long			i;
+
+	phis = init_phi_struct(sim);
+	if (!phis)
+		return (display_error_msg("unsuccessful memory allocation\n"));
+	sim->phis = phis;
+	i = 0;
+	init_monitoring_threads(sim);
+	while (i < sim->phi_num)
 	{
-		timer = (struct timeval *)malloc(sizeof(struct timeval));
-		if (!timer)
-			break; // TODO with better solution
-		gettimeofday(&timer, NULL);
-		update_timestamp(sim, timer);
-		free(timer);
+		pthread_create(&(phis[i].thread_id), NULL,
+			 &philo_routine, &phis[i]);
+		i++;
 	}
-}
-
-void	update_timestamp(t_sim *sim, struct timeval *timer)
-{
-	useconds_t	current;
-	useconds_t	start;
-
-	current = ft_timestamp(timer->tv_sec, timer->tv_sec);
-	start = sim->start;
-	sim->chrono = current - start;
-}
-
-int	philo(t_sim *sim)
-{
-	t_phi			*phi;
-	struct timeval	*timer;
-	long long		i;
-
-	timer = (struct timeval *)malloc(sizeof(struct timeval));
-	if (!timer)
-		return (-1); // TODO
-	gettimeofday(&timer, NULL);
-	
+	sim->phis_init = 1;
 	i = 0;
 	while (i < sim->phi_num)
 	{
-		
-		init_phi(sim, i);
+		pthread_join(phis[i].thread_id, NULL);
 		i++;
 	}
-	return (0);
+	pthread_join(*(sim->monitor_meals), NULL);
+	pthread_join(*(sim->chronometer), NULL);
+	return (leak_killing(sim, phis));
 }
 
 int	main(int argc, char **argv)
 {
 	int			valid;
-	int			rtn;
 	t_sim		*sim;
-	
+
 	if (argc != 6 && argc != 5)
-	{
-		write(2, "philosophers : error : wrong number of arguments\n", 49);
-		return (1);
-	}
+		return (display_error_msg("wrong number of arguments\n"));
 	valid = check_args_validity(argc, argv);
 	if (valid == 1)
-	{
-		write(2, "philosophers : error : invalid argument format\n", 47);
-		return (1);
-	}
+		return (display_error_msg("invalid argument format\n"));
 	sim = (t_sim *)malloc(sizeof(t_sim));
 	if (!sim)
-		return (-1); // change that
-	init_sim_struct(sim, argv);
-	rtn = philo(sim);
-	return (rtn);
+		return (display_error_msg("unsuccessful memory allocation\n"));
+	init_sim_struct(sim, argv, argc);
+	return (init_philos_threads(sim));
 }

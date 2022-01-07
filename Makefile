@@ -6,13 +6,23 @@
 #    By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/29 11:16:01 by cjulienn          #+#    #+#              #
-#    Updated: 2021/12/29 11:29:08 by cjulienn         ###   ########.fr        #
+#    Updated: 2022/01/07 13:10:48 by cjulienn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SRCS = ./philosophers.c
+SRCS = ./actions.c \
+	   ./check_args.c \
+	   ./errors.c \
+	   ./free.c \
+	   ./init_structs.c \
+	   ./msgs.c \
+	   ./philosophers.c \
+	   ./routines.c \
+	   ./time.c \
+	   ./utils_1.c \
+	   ./utils_2.c 
 
 OBJS = $(SRCS:.c=.o)
 

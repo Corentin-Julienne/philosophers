@@ -6,8 +6,15 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:32:34 by cjulienn          #+#    #+#             */
-/*   Updated: 2021/12/29 11:32:51 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/07 16:43:01 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+int	leak_killing(t_sim *sim, t_phi *phis)
+{
+	free(sim);
+	free(phis);
+	return (0);
+}
