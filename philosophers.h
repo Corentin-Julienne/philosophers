@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:00 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/07 16:34:12 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 14:47:26 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ int					leak_killing(t_sim *sim, t_phi *phis);
 void				init_sim_struct(t_sim *sim, char **argv, int argc);
 t_phi				*init_phi_struct(t_sim *sim);
 /* msgs.c */
-int					display_msg(long long timestp, long long id, int msg_type);
+int					display_msg(long long timestp, long long id, int msg_type,
+						 t_phi *phi);
 /* philosophers.c */
 int					init_philos_threads(t_sim *sim);
 /* routines */
@@ -83,7 +84,7 @@ void				*death_routine(void *arg);
 void				*philo_routine(void *arg);
 /* time.c */
 long long			get_time_now(void);
-void				philo_performing_task(long long duration);
+void				philo_performing_task(long long duration, t_phi *phi);
 /* utils_1.c */
 int					ft_isdigit(char c);
 size_t				ft_strlen(const char *s);

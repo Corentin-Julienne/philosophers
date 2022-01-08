@@ -6,43 +6,34 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:33:02 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/07 16:40:48 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 14:46:00 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static void	use_fork(t_phi *phi, int fork_type)
+static int	use_fork(t_phi *phi, int fork_type)
 {
+	if (phi->sim->victory != -1 || phi->sim->game_over != -1)
+		return (1);
 	if (fork_type == RIGHT_FORK)
 		pthread_mutex_lock(phi->r_fork);
 	else
 		pthread_mutex_lock(phi->l_fork);
-	pthread_mutex_lock(phi->write_msg);
-	display_msg(phi->sim->time, phi->id, FORK);
+	display_msg(phi->sim->time, phi->id, FORK, phi);
 	if (fork_type == LEFT_FORK)
 	{
-		display_msg(phi->sim->time, phi->id, EATING);
-		pthread_mutex_unlock(phi->write_msg);
+		display_msg(phi->sim->time, phi->id, EATING, phi);
 		phi->last_eat = phi->sim->time;
 	}
-	else
-		pthread_mutex_unlock(phi->write_msg);
-}
-
-static void	go_to_sleep(t_phi *phi)
-{
-	pthread_mutex_lock(phi->write_msg);
-	display_msg(phi->sim->time, phi->id, SLEEPING);
-	pthread_mutex_unlock(phi->write_msg);
-	philo_performing_task(phi->sim->tt_sleep);
+	return (0);
 }
 
 void	eat_sleep_procedure(t_phi *phi)
 {
 	use_fork(phi, RIGHT_FORK);
 	use_fork(phi, LEFT_FORK);
-	philo_performing_task(phi->sim->tt_eat);
+	philo_performing_task(phi->sim->tt_eat, phi);
 	pthread_mutex_unlock(phi->r_fork);
 	pthread_mutex_unlock(phi->l_fork);
 	phi->meal_num++;
@@ -52,8 +43,7 @@ void	eat_sleep_procedure(t_phi *phi)
 		phi->sim->win_num++;
 		pthread_mutex_unlock(phi->phi_win);
 	}
-	go_to_sleep(phi);
-	pthread_mutex_lock(phi->write_msg);
-	display_msg(phi->sim->time, phi->id, THINKING);
-	pthread_mutex_unlock(phi->write_msg);
+	display_msg(phi->sim->time, phi->id, SLEEPING, phi);
+	philo_performing_task(phi->sim->tt_sleep, phi);
+	display_msg(phi->sim->time, phi->id, THINKING, phi);
 }

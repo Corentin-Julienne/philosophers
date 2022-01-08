@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 13:43:15 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/07 16:12:37 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/07 17:15:46 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ size_t	ft_strlen(const char *s)
 
 long long	calc_res(const char *str)
 {
-	unsigned long long		res;
+	long long	res;
 
 	res = 0;
 	while (str[0])

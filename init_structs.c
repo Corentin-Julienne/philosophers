@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 13:19:47 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/07 16:42:04 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 14:47:07 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,32 +70,42 @@ static int	init_mutexes(t_phi *phis)
 	return (0);
 }
 
-static int	store_threads(t_phi *phis)
+static int	store_threads(t_phi *phis, t_sim *sim)
 {
-	printf("not implementedc yet !\n");
+	pthread_t		*thread_ids;
+	pthread_t		*death_ids;
+	long long		i;
+
+	thread_ids = (pthread_t *)malloc(sizeof(pthread_t) * sim->phi_num);
+	death_ids = (pthread_t *)malloc(sizeof(pthread_t) * sim->phi_num);
+	if (!thread_ids || !death_ids)
+	{
+		free(phis);
+		return (display_error_msg("unsuccessful memory allocation\n"));
+	}
+	while (i < sim->phi_num)
+	{
+		phis[i].thread_id = thread_ids[i];
+		phis[i].death_id = death_ids[i];
+		i++;
+	}
+	return (0);
 }
 
 t_phi	*init_phi_struct(t_sim *sim)
 {
 	t_phi			*phis;
-	pthread_t		*thread_ids;
 	long long		i;
 
 	phis = (t_phi *)malloc(sizeof(t_phi) * sim->phi_num);
 	if (!phis)
 		return (NULL);
-	thread_ids = (pthread_t *)malloc(sizeof(pthread_t) * sim->phi_num);
-	if (!thread_ids)
-	{
-		free(phis);
-		return (NULL);
-	}
 	i = 0;
+	store_threads(phis, sim);
 	while (i < sim->phi_num)
 	{
 		phis[i].id = i + 1;
 		phis[i].meal_num = 0;
-		phis[i].thread_id = thread_ids[i];
 		init_mutexes(phis);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:04 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/07 16:38:37 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 14:28:41 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ int	init_monitoring_threads(t_sim *sim)
 	pthread_t			*chronometer;
 	pthread_t			*monitor_meals;
 
-	pthread_create(chronometer, NULL, &chrono, &sim);
+	pthread_create(chronometer, NULL, &chrono, (void *)sim);
 	if (sim->win_cond != -1)
-		pthread_create(monitor_meals, NULL, &victory_routine, &sim);
+		pthread_create(monitor_meals, NULL, &victory_routine, (void *)sim);
 	sim->chronometer = chronometer;
 	sim->monitor_meals = monitor_meals;
 	return (0);
@@ -33,7 +33,6 @@ int	init_philos_threads(t_sim *sim)
 	phis = init_phi_struct(sim);
 	if (!phis)
 		return (display_error_msg("unsuccessful memory allocation\n"));
-	sim->phis = phis;
 	i = 0;
 	init_monitoring_threads(sim);
 	while (i < sim->phi_num)
