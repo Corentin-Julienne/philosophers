@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 12:00:27 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 14:48:56 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 16:36:57 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ void	*victory_routine(void *arg)
 {
 	t_sim	*sim;
 
-	sim = (t_sim *)sim;
+	sim = (t_sim *)arg;
 	while (sim->win_num < sim->win_cond && sim->game_over == -1)
 		usleep(1);
-	if (sim->win_num >= sim->win_num)
+	if (sim->win_num >= sim->win_cond)
 		sim->victory = get_time_now();
 	return (NULL);
 }
@@ -49,14 +49,10 @@ void	*death_routine(void *arg)
 		 && phi->sim->victory == -1)
 		usleep(1);
 	if ((phi->sim->time >= (phi->last_eat + phi->sim->tt_die)))
-		phi->sim->game_over == get_time_now();
+		phi->sim->game_over = get_time_now();
 	if (phi->sim->victory == -1 || (phi->sim->victory != -1
 			 && phi->sim->game_over < phi->sim->victory))
-	{
-		pthread_mutex_lock(phi->write_msg);
-		display_msg(phi->sim->time, phi->id, DEAD, phi);
-		pthread_mutex_unlock(phi->write_msg);
-	}
+		display_msg(phi->id, DEAD, phi);
 	return (NULL);
 }
 

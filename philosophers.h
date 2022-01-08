@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:00 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 14:47:26 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 18:59:12 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,8 @@ typedef struct s_sim
 	long long			game_over;
 	long long			victory;
 	int					phis_init;
-	pthread_t			*chronometer;
-	pthread_t			*monitor_meals;
-	struct s_phi		*phis;
+	pthread_t			chronometer;
+	pthread_t			monitor_meals;
 }						t_sim;
 
 typedef struct s_phi
@@ -51,11 +50,11 @@ typedef struct s_phi
 	long long			id;
 	long long			last_eat;
 	long long			meal_num;
-	pthread_mutex_t		*r_fork;
-	pthread_mutex_t		*l_fork;
-	pthread_mutex_t		*write_msg;
-	pthread_mutex_t		*add_meal_count;
-	pthread_mutex_t		*phi_win;
+	pthread_mutex_t		r_fork;
+	pthread_mutex_t		l_fork;
+	pthread_mutex_t		write_msg;
+	pthread_mutex_t		add_meal_count;
+	pthread_mutex_t		phi_win;
 	pthread_t			thread_id;
 	pthread_t			death_id;
 	t_sim				*sim;
@@ -73,8 +72,7 @@ int					leak_killing(t_sim *sim, t_phi *phis);
 void				init_sim_struct(t_sim *sim, char **argv, int argc);
 t_phi				*init_phi_struct(t_sim *sim);
 /* msgs.c */
-int					display_msg(long long timestp, long long id, int msg_type,
-						 t_phi *phi);
+int					display_msg(long long id, int msg_type, t_phi *phi);
 /* philosophers.c */
 int					init_philos_threads(t_sim *sim);
 /* routines */

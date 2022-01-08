@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:12:55 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 14:41:09 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 19:18:17 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static char	*obtain_msg(int msg_type)
 	return (msg);
 }
 
-int	display_msg(long long timestp, long long id, int msg_type, t_phi *phi)
+int	display_msg(long long id, int msg_type, t_phi *phi)
 {
 	char	*msg_content;
 	char	*id_to_str;
@@ -44,11 +44,11 @@ int	display_msg(long long timestp, long long id, int msg_type, t_phi *phi)
 	}
 	if (phi->sim->game_over == -1 && phi->sim->victory == -1)
 	{
-		pthread_mutex_lock(phi->write_msg);
-		write(STDOUT_FILENO, &time, ft_strlen(time));
-		write(STDOUT_FILENO, &id_to_str, ft_strlen(id_to_str));
-		write(STDOUT_FILENO, &msg_content, ft_strlen(msg_content));
-		pthread_mutex_unlock(phi->write_msg);
+		pthread_mutex_lock(&phi->write_msg);
+		write(STDOUT_FILENO, time, ft_strlen(time));
+		write(STDOUT_FILENO, id_to_str, ft_strlen(id_to_str));
+		write(STDOUT_FILENO, msg_content, ft_strlen(msg_content));
+		pthread_mutex_unlock(&phi->write_msg);
 	}
 	free (id_to_str);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:04 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 14:28:41 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/08 16:35:25 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 int	init_monitoring_threads(t_sim *sim)
 {
-	pthread_t			*chronometer;
-	pthread_t			*monitor_meals;
+	pthread_t			chronometer;
+	pthread_t			monitor_meals;
 
-	pthread_create(chronometer, NULL, &chrono, (void *)sim);
+	monitor_meals = NULL;
+	pthread_create(&chronometer, NULL, &chrono, (void *)sim);
 	if (sim->win_cond != -1)
-		pthread_create(monitor_meals, NULL, &victory_routine, (void *)sim);
+		pthread_create(&monitor_meals, NULL, &victory_routine, (void *)sim);
 	sim->chronometer = chronometer;
 	sim->monitor_meals = monitor_meals;
 	return (0);
@@ -48,8 +49,8 @@ int	init_philos_threads(t_sim *sim)
 		pthread_join(phis[i].thread_id, NULL);
 		i++;
 	}
-	pthread_join(*(sim->monitor_meals), NULL);
-	pthread_join(*(sim->chronometer), NULL);
+	pthread_join(sim->monitor_meals, NULL);
+	pthread_join(sim->chronometer, NULL);
 	return (leak_killing(sim, phis));
 }
 
