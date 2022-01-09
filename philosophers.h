@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:00 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 18:59:12 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/09 19:46:11 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 
 # define RIGHT_FORK		1
 # define LEFT_FORK		2
+
+# define LOCK_FORK		1
+# define UNLOCK_FORK	2
 
 typedef struct s_sim
 {
@@ -50,15 +53,22 @@ typedef struct s_phi
 	long long			id;
 	long long			last_eat;
 	long long			meal_num;
-	pthread_mutex_t		r_fork;
-	pthread_mutex_t		l_fork;
-	pthread_mutex_t		write_msg;
-	pthread_mutex_t		add_meal_count;
-	pthread_mutex_t		phi_win;
 	pthread_t			thread_id;
 	pthread_t			death_id;
 	t_sim				*sim;
+	struct s_mutexes	*mutexes;
 }						t_phi;
+
+typedef struct s_mutexes
+{
+	pthread_mutex_t		write_msg;
+	pthread_mutex_t		add_meal_count;
+	pthread_mutex_t		phi_win;
+	pthread_mutex_t		*forks;
+}						t_mutexes;
+
+
+
 
 /* actions.c */
 void				eat_sleep_procedure(t_phi *phi_by_id);

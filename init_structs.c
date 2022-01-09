@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 13:19:47 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 19:19:35 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/09 20:04:28 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,7 @@ static int	store_threads(t_phi *phis, t_sim *sim)
 	thread_ids = (pthread_t *)malloc(sizeof(pthread_t) * sim->phi_num);
 	death_ids = (pthread_t *)malloc(sizeof(pthread_t) * sim->phi_num);
 	if (!thread_ids || !death_ids)
-	{
-		free(phis);
 		return (display_error_msg("unsuccessful memory allocation\n"));
-	}
 	i = 0;
 	while (i < sim->phi_num)
 	{
@@ -51,17 +48,17 @@ static int	store_threads(t_phi *phis, t_sim *sim)
 	return (0);
 }
 
-static pthread_mutex_t	*init_forks(t_phi *phis)
+static pthread_mutex_t	*init_forks(t_sim *sim)
 {
 	pthread_mutex_t		*forks;
 	long long			i;
 	
 	forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
-				 * phis->sim->phi_num);
+				 * sim->phi_num);
 	if (!forks)
 		return (NULL);
 	i = 0;
-	while (i < phis->sim->phi_num)
+	while (i < sim->phi_num)
 	{
 		pthread_mutex_init(&forks[i], NULL);
 		i++;
@@ -69,53 +66,48 @@ static pthread_mutex_t	*init_forks(t_phi *phis)
 	return (forks);
 }
 
-static int	init_mutexes(t_phi *phis)
+static t_mutexes	*init_mutexes_struct(t_sim *sim)
 {
+	t_mutexes			*mutexes;
 	pthread_mutex_t		write_msg;
 	pthread_mutex_t		add_meal_count;
 	pthread_mutex_t		phi_win;
 	pthread_mutex_t		*forks;
-	long long			i;
 
-	forks = init_forks(phis);
-	if (!forks)
-		return (display_error_msg("unsuccessful memory allocation\n"));
+	mutexes = (t_mutexes *)malloc(sizeof(t_mutexes));	
+	if (!mutexes)
+		return (NULL);
 	pthread_mutex_init(&write_msg, NULL);
 	pthread_mutex_init(&add_meal_count, NULL);
 	pthread_mutex_init(&phi_win, NULL);
-	i = 0;
-	while (i < phis->sim->phi_num)
-	{
-		phis[i].write_msg = write_msg;
-		phis[i].add_meal_count = add_meal_count;
-		phis[i].phi_win = phi_win;
-		phis[i].r_fork = forks[i];
-		i++;
-	}
-	return (0);
+	mutexes->write_msg = write_msg;
+	mutexes->add_meal_count = add_meal_count;
+	mutexes->phi_win = phi_win;
+	forks = init_forks(sim);
+	if (!forks)
+		return (NULL);
+	mutexes->forks = forks;
+	return (mutexes);
 }
 
 t_phi	*init_phi_struct(t_sim *sim)
 {
 	t_phi			*phis;
+	t_mutexes		*mutexes;
 	long long		i;
 
 	phis = (t_phi *)malloc(sizeof(t_phi) * sim->phi_num);
-	if (!phis)
+	mutexes = init_mutexes_struct(sim);
+	if (!phis || !mutexes)
 		return (NULL);
-	phis->sim = sim;
-	i = 0;
 	store_threads(phis, sim);
-	init_mutexes(phis);
+	i = 0;
 	while (i < sim->phi_num)
 	{
 		phis[i].sim = sim;
+		phis[i].mutexes = mutexes;
 		phis[i].id = i + 1;
 		phis[i].meal_num = 0;
-		if (sim->phi_num > 1 && i < (sim->phi_num - 1))
-			phis[i + 1].l_fork = phis[i].r_fork;
-		else if (i == (sim->phi_num - 1) && sim->phi_num != 1)
-			phis[0].l_fork = phis[i].r_fork;
 		i++;
 	}
 	return (phis);

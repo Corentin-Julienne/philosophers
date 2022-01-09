@@ -6,11 +6,29 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:04 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 16:35:25 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/09 20:07:42 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+int	display_phis(t_phi *phis) // test function only
+{
+	long long					i;
+	
+	i = 0;
+	while (i < phis->sim->phi_num)
+	{
+		printf("id             : %lli\n" ,phis[i].id);
+		printf("phi_num        : %lli\n", phis[i].sim->phi_num);
+		printf("last eat       : %lli\n" ,phis[i].last_eat);
+		printf("meal num       : %lli\n" ,phis[i].meal_num);
+		printf("tt_die         : %lli\n", phis[i].sim->tt_die);	
+		printf("----------------------\n\n");
+		i++;
+	}
+	return (0);
+}
 
 int	init_monitoring_threads(t_sim *sim)
 {
@@ -34,8 +52,9 @@ int	init_philos_threads(t_sim *sim)
 	phis = init_phi_struct(sim);
 	if (!phis)
 		return (display_error_msg("unsuccessful memory allocation\n"));
-	i = 0;
+	// display_phis(phis);
 	init_monitoring_threads(sim);
+	i = 0;
 	while (i < sim->phi_num)
 	{
 		pthread_create(&(phis[i].thread_id), NULL,

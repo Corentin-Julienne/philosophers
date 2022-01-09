@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 12:00:27 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/08 16:36:57 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/09 20:29:31 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	*death_routine(void *arg)
 	t_phi	*phi;
 
 	phi = (t_phi *)arg;
+	usleep(60000); // testing purpose, remove after
 	while ((phi->sim->time < (phi->last_eat + phi->sim->tt_die))
 		 && phi->sim->victory == -1)
 		usleep(1);
@@ -59,12 +60,15 @@ void	*death_routine(void *arg)
 void	*philo_routine(void *arg)
 {
 	t_phi			*phi;
-
+	
 	phi = (t_phi *)arg;
-	pthread_create(&(phi->death_id), NULL, &death_routine, (void *)phi);
 	while (phi->sim->phis_init == 0)
 		usleep(1);
-	while (phi->sim->victory == 1 && phi->sim->game_over == -1)
+	phi->last_eat = phi->sim->time;
+	pthread_create(&(phi->death_id), NULL, &death_routine, (void *)phi);
+	if (phi->id % 2 == 0)
+		usleep(2000);
+	while (phi->sim->victory == -1 && phi->sim->game_over == -1)
 		eat_sleep_procedure(phi);
 	pthread_join(phi->death_id, NULL);
 	return (NULL);
