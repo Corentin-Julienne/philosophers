@@ -6,55 +6,38 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:33:02 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/09 20:02:40 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/11 12:02:05 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int	handle_left_fork(t_phi *phi, int action)
-{
-	if (action == LOCK_FORK)
-	{
-		if (phi->sim->phi_num > 1 && phi->id != 1)
-			pthread_mutex_lock(&phi->mutexes->forks[phi->id - 2]);
-		else if (phi->sim->phi_num > 1 && phi->id == 1)
-			pthread_mutex_lock(&phi->mutexes->forks[0]);	
-	}
-	else
-	{
-		if (phi->sim->phi_num > 1 && phi->id != 1)
-			pthread_mutex_unlock(&phi->mutexes->forks[phi->id - 2]);
-		else if (phi->sim->phi_num > 1 && phi->id == 1)
-			pthread_mutex_unlock(&phi->mutexes->forks[0]);	
-	}
-	return (0);
-}
-
 static int	use_fork(t_phi *phi, int fork_type)
 {
-	if (phi->sim->victory != -1 || phi->sim->game_over != -1)
-		return (1);
 	if (fork_type == RIGHT_FORK)
-		pthread_mutex_lock(&phi->mutexes->forks[phi->id - 1]); // r_fork
+		pthread_mutex_lock(phi->r_fork);
 	else
-		handle_left_fork(phi, LOCK_FORK);
-	display_msg(phi->id, FORK, phi);
+		pthread_mutex_lock(phi->l_fork);
+	if (display_msg(phi->id, FORK, phi) != 0)
+		return (1);
 	if (fork_type == LEFT_FORK)
 	{
-		display_msg(phi->id, EATING, phi);
-		phi->last_eat = phi->sim->time;
+		if (display_msg(phi->id, EATING, phi) != 0)
+			return (1);
+		phi->last_eat = get_time_now();
 	}
 	return (0);
 }
 
-void	eat_sleep_procedure(t_phi *phi)
+int	eat_sleep_procedure(t_phi *phi)
 {
-	use_fork(phi, RIGHT_FORK);
-	use_fork(phi, LEFT_FORK);
-	philo_performing_task(phi->sim->tt_eat, phi);
-	pthread_mutex_unlock(&phi->mutexes->forks[phi->id - 1]);
-	handle_left_fork(phi, UNLOCK_FORK);
+	if (use_fork(phi, RIGHT_FORK) != 0)
+		return (1);
+	if (use_fork(phi, LEFT_FORK) != 0)
+		return (1);
+	philo_performing_task(phi->sim->tt_eat);
+	pthread_mutex_unlock(phi->r_fork);
+	pthread_mutex_unlock(phi->l_fork);
 	phi->meal_num++;
 	if (phi->meal_num == phi->sim->win_cond)
 	{
@@ -62,7 +45,10 @@ void	eat_sleep_procedure(t_phi *phi)
 		phi->sim->win_num++;
 		pthread_mutex_unlock(&(phi->mutexes->phi_win));
 	}
-	display_msg(phi->id, SLEEPING, phi);
-	philo_performing_task(phi->sim->tt_sleep, phi);
-	display_msg(phi->id, THINKING, phi);
+	if (display_msg(phi->id, SLEEPING, phi) != 0)
+		return (1);
+	philo_performing_task(phi->sim->tt_sleep);
+	if (display_msg(phi->id, THINKING, phi) != 0)
+		return (1);
+	return (0);
 }

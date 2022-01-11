@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 13:19:47 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/09 20:04:28 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/11 12:44:12 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ void	init_sim_struct(t_sim *sim, char **argv, int argc)
 	else
 		sim->win_cond = -1;
 	sim->win_num = 0;
-	sim->victory = -1;
-	sim->game_over = -1;
 	sim->phis_init = 0;
 }
 
@@ -41,8 +39,8 @@ static int	store_threads(t_phi *phis, t_sim *sim)
 	i = 0;
 	while (i < sim->phi_num)
 	{
-		phis[i].thread_id = thread_ids[i];
-		phis[i].death_id = death_ids[i];
+		phis[i].thread_id = &thread_ids[i];
+		phis[i].death_id = &death_ids[i];
 		i++;
 	}
 	return (0);
@@ -52,9 +50,9 @@ static pthread_mutex_t	*init_forks(t_sim *sim)
 {
 	pthread_mutex_t		*forks;
 	long long			i;
-	
+
 	forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
-				 * sim->phi_num);
+			 * sim->phi_num);
 	if (!forks)
 		return (NULL);
 	i = 0;
@@ -74,7 +72,7 @@ static t_mutexes	*init_mutexes_struct(t_sim *sim)
 	pthread_mutex_t		phi_win;
 	pthread_mutex_t		*forks;
 
-	mutexes = (t_mutexes *)malloc(sizeof(t_mutexes));	
+	mutexes = (t_mutexes *)malloc(sizeof(t_mutexes));
 	if (!mutexes)
 		return (NULL);
 	pthread_mutex_init(&write_msg, NULL);
@@ -108,6 +106,11 @@ t_phi	*init_phi_struct(t_sim *sim)
 		phis[i].mutexes = mutexes;
 		phis[i].id = i + 1;
 		phis[i].meal_num = 0;
+		phis[i].r_fork = &phis->mutexes->forks[i];
+		if (phis->sim->phi_num != 1 && i > 0)
+			phis[i].l_fork = &phis->mutexes->forks[i - 1];
+		else if (phis->sim->phi_num != 1 && i == 0)
+			phis[i].l_fork = &phis->mutexes->forks[phis->sim->phi_num - 1];
 		i++;
 	}
 	return (phis);

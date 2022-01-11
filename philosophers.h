@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:00 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/09 19:46:11 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/11 11:56:42 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,11 @@
 # define EATING			1
 # define SLEEPING		2
 # define DEAD			3
-# define FORK			4
+# define VICTORY		4
+# define FORK			5
 
 # define RIGHT_FORK		1
 # define LEFT_FORK		2
-
-# define LOCK_FORK		1
-# define UNLOCK_FORK	2
 
 typedef struct s_sim
 {
@@ -38,13 +36,9 @@ typedef struct s_sim
 	long long			tt_eat;
 	long long			tt_sleep;
 	long long			start;
-	long long			time;
 	long long			win_cond;
 	long long			win_num;
-	long long			game_over;
-	long long			victory;
 	int					phis_init;
-	pthread_t			chronometer;
 	pthread_t			monitor_meals;
 }						t_sim;
 
@@ -53,8 +47,10 @@ typedef struct s_phi
 	long long			id;
 	long long			last_eat;
 	long long			meal_num;
-	pthread_t			thread_id;
-	pthread_t			death_id;
+	pthread_t			*thread_id;
+	pthread_t			*death_id;
+	pthread_mutex_t		*r_fork;
+	pthread_mutex_t		*l_fork;
 	t_sim				*sim;
 	struct s_mutexes	*mutexes;
 }						t_phi;
@@ -67,11 +63,8 @@ typedef struct s_mutexes
 	pthread_mutex_t		*forks;
 }						t_mutexes;
 
-
-
-
 /* actions.c */
-void				eat_sleep_procedure(t_phi *phi_by_id);
+int					eat_sleep_procedure(t_phi *phi_by_id);
 /* check_args.c */
 int					check_args_validity(int argc, char **argv);
 /* errors.c */
@@ -86,13 +79,12 @@ int					display_msg(long long id, int msg_type, t_phi *phi);
 /* philosophers.c */
 int					init_philos_threads(t_sim *sim);
 /* routines */
-void				*chrono(void *arg);
 void				*victory_routine(void *arg);
 void				*death_routine(void *arg);
 void				*philo_routine(void *arg);
 /* time.c */
 long long			get_time_now(void);
-void				philo_performing_task(long long duration, t_phi *phi);
+void				philo_performing_task(long long duration);
 /* utils_1.c */
 int					ft_isdigit(char c);
 size_t				ft_strlen(const char *s);
