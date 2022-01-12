@@ -1,29 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   routines.c                                         :+:      :+:    :+:   */
+/*   utils_1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/04 12:00:27 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 11:25:33 by cjulienn         ###   ########.fr       */
+/*   Created: 2021/12/29 13:43:15 by cjulienn          #+#    #+#             */
+/*   Updated: 2022/01/07 17:15:46 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./philosophers.h"
+#include "philosophers.h"
 
-void	*philo_routine(void *arg)
+int	ft_isdigit(char c)
 {
-	t_phi			*phi;
-	int				res_func;
+	if (c >= 48 && c <= 57)
+		return (1);
+	else
+		return (0);
+}
 
-	phi = (t_phi *)arg;
-	res_func = 0;
-	while (phi->sim->phis_init == 0)
-		usleep(1);
-	phi->last_eat = get_time_now();
-	algo_phi_wait(phi);
-	while (!res_func)
-		res_func = eat_sleep_procedure(phi);
-	return (NULL);
+size_t	ft_strlen(const char *s)
+{
+	size_t	counter;
+
+	counter = 0;
+	while (s[counter])
+		counter++;
+	return (counter);
+}
+
+long long	calc_res(const char *str)
+{
+	long long	res;
+
+	res = 0;
+	while (str[0])
+	{
+		res = (res * 10) + (str[0] - '0');
+		str++;
+	}
+	return (res);
 }

@@ -6,7 +6,7 @@
 #    By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/29 11:16:01 by cjulienn          #+#    #+#              #
-#    Updated: 2022/01/09 13:48:30 by cjulienn         ###   ########.fr        #
+#    Updated: 2022/01/11 16:47:33 by cjulienn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ SRCS = ./actions.c \
 	   ./free.c \
 	   ./init_structs.c \
 	   ./msgs.c \
+	   ./mutexes.c \
 	   ./philosophers.c \
 	   ./routines.c \
 	   ./time.c \

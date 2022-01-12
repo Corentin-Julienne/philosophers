@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   routines.c                                         :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/04 12:00:27 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 11:25:33 by cjulienn         ###   ########.fr       */
+/*   Created: 2021/12/29 16:43:08 by cjulienn          #+#    #+#             */
+/*   Updated: 2022/01/12 11:38:45 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./philosophers.h"
+#include "philosophers.h"
 
-void	*philo_routine(void *arg)
+#include "philosophers.h"
+
+long long	get_time_now(void)
 {
-	t_phi			*phi;
-	int				res_func;
+	struct timeval		timestamp;
 
-	phi = (t_phi *)arg;
-	res_func = 0;
-	while (phi->sim->phis_init == 0)
-		usleep(1);
-	phi->last_eat = get_time_now();
-	algo_phi_wait(phi);
-	while (!res_func)
-		res_func = eat_sleep_procedure(phi);
-	return (NULL);
+	gettimeofday(&timestamp, NULL);
+	return ((timestamp.tv_sec * 1000) + (timestamp.tv_usec / 1000));
+}
+
+void	philo_performing_task(long long duration)
+{
+	long long	time;
+
+	time = get_time_now();
+	while (get_time_now() < (time + duration))
+		usleep(1000);
 }
