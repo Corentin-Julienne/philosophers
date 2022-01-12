@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:12:55 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 11:26:42 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/12 19:25:34 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ int	display_msg(long long id, int msg_type, t_phi *phi)
 		if (msg_type == VICTORY)
 		{
 			print_victory_msg(msg_type);
+			pthread_mutex_unlock(&(phi->mutexes->write_msg));
 			return (stop);
 		}
 		print_msg(id, msg_type);

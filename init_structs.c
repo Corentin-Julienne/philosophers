@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 13:19:47 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/11 20:04:26 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:40:46 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ static int	store_threads(t_phi *phis, t_sim *sim)
 
 	thread_ids = (pthread_t *)malloc(sizeof(pthread_t) * sim->phi_num);
 	if (!thread_ids)
-		return (display_error_msg("unsuccessful memory allocation\n"));
+		return (1);
+	sim->thread_ids = thread_ids;
 	i = 0;
 	while (i < sim->phi_num)
 	{
@@ -44,17 +45,10 @@ static int	store_threads(t_phi *phis, t_sim *sim)
 	return (0);
 }
 
-t_phi	*init_phi_struct(t_sim *sim)
+static void	setup_phis(t_phi *phis, t_mutexes *mutexes, t_sim *sim)
 {
-	t_phi			*phis;
-	t_mutexes		*mutexes;
 	long long		i;
 
-	phis = (t_phi *)malloc(sizeof(t_phi) * sim->phi_num);
-	mutexes = init_mutexes_struct(sim);
-	if (!phis || !mutexes)
-		return (NULL);
-	store_threads(phis, sim);
 	i = 0;
 	while (i < sim->phi_num)
 	{
@@ -70,5 +64,28 @@ t_phi	*init_phi_struct(t_sim *sim)
 			phis[i].l_fork = &phis->mutexes->forks[phis->sim->phi_num - 1];
 		i++;
 	}
+}
+
+t_phi	*init_phi_struct(t_sim *sim)
+{
+	t_phi			*phis;
+	t_mutexes		*mutexes;
+
+	phis = (t_phi *)malloc(sizeof(t_phi) * sim->phi_num);
+	if (!phis)
+		return (NULL);
+	mutexes = init_mutexes_struct(sim);
+	if (!mutexes)
+	{
+		free(phis);
+		return (NULL);
+	}
+	if (store_threads(phis, sim) != 0)
+	{
+		free(phis);
+		free(mutexes);
+		return (NULL); 
+	}
+	setup_phis(phis, mutexes, sim);
 	return (phis);
 }

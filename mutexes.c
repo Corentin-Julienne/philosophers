@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:47:12 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 11:29:34 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:23:12 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,11 @@ static pthread_mutex_t	*init_forks(t_sim *sim)
 	i = 0;
 	while (i < sim->phi_num)
 	{
-		pthread_mutex_init(&forks[i], NULL);
+		if (pthread_mutex_init(&forks[i], NULL) != 0)
+		{
+			free(forks);
+			return (NULL);
+		}	
 		i++;
 	}
 	return (forks);
@@ -62,9 +66,16 @@ t_mutexes	*init_mutexes_struct(t_sim *sim)
 		return (NULL);
 	forks = init_forks(sim);
 	if (!forks)
+	{
+		free(mutexes);
 		return (NULL);
+	}
 	mutexes->forks = forks;
 	if (init_mutexes(mutexes) == 1)
+	{
+		free(mutexes);
+		free(forks);
 		return (NULL);
+	}
 	return (mutexes);
 }

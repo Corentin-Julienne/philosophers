@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:00 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 11:25:10 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/12 19:08:14 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct s_sim
 	long long			win_num;
 	int					phis_init;
 	int					endgame;
-	pthread_t			monitor_meals;
+	pthread_t			*thread_ids;
 }						t_sim;
 
 typedef struct s_phi
@@ -71,7 +71,7 @@ int					check_args_validity(int argc, char **argv);
 /* errors.c */
 int					display_error_msg(const char *err_specific);
 /* free.c */
-int					leak_killing(t_sim *sim, t_phi *phis);
+int					clean_program(t_phi *phis);
 /* init_structs.c */
 void				init_sim_struct(t_sim *sim, char **argv, int argc);
 t_phi				*init_phi_struct(t_sim *sim);
@@ -79,17 +79,13 @@ t_phi				*init_phi_struct(t_sim *sim);
 int					display_msg(long long id, int msg_type, t_phi *phi);
 /* mutexes.c */
 t_mutexes			*init_mutexes_struct(t_sim *sim);
-/* philosophers.c */
-int					init_philos_threads(t_sim *sim);
 /* routines */
-void				*check_routine(void *arg);
 void				*philo_routine(void *arg);
 /* time.c */
-int					custom_usleep(long long duration);
-long long			is_dead(long long last_eat, long long tt_die);
-long long			get_time_now(void);
-void				philo_performing_task(long long duration, t_phi *phi);
 void				algo_phi_wait(t_phi *phi);
+int					is_dead(long long last_eat, long long tt_die);
+long long			get_time_now(void);
+int					philo_performing_task(long long duration, t_phi *phi);
 /* utils_1.c */
 int					ft_isdigit(char c);
 size_t				ft_strlen(const char *s);

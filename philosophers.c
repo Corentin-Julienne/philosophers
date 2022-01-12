@@ -6,11 +6,27 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:04 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 11:30:18 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:55:44 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+static void	phi_has_died(t_phi *phis, long long i)
+{
+	display_msg(phis[i].id, DEAD, &phis[i]);
+	pthread_mutex_lock(&phis->mutexes->stop_game);
+	phis->sim->endgame++;
+	pthread_mutex_unlock(&phis->mutexes->stop_game);
+}
+
+static void	phis_have_eaten(t_phi *phis, long long i)
+{
+	display_msg(phis[i].id, VICTORY, &phis[i]);
+	pthread_mutex_lock(&phis->mutexes->stop_game);
+	phis->sim->endgame++;
+	pthread_mutex_unlock(&phis->mutexes->stop_game);
+}
 
 static void	wait_for_endgame(t_phi *phis)
 {
@@ -24,31 +40,29 @@ static void	wait_for_endgame(t_phi *phis)
 			if ((get_time_now() >= (phis[i].last_eat + phis->sim->tt_die))
 				 && phis[i].last_eat != -1)
 			{
-				display_msg(phis[i].id, DEAD, &phis[i]);
-				pthread_mutex_lock(&phis->mutexes->stop_game);
-				phis->sim->endgame++;
-				pthread_mutex_unlock(&phis->mutexes->stop_game);
+				phi_has_died(phis, i);
+				break ;
 			}
 			else if (phis->sim->win_num == phis->sim->phi_num)
 			{
-				display_msg(phis[i].id, VICTORY, &phis[i]);
-				pthread_mutex_lock(&phis->mutexes->stop_game);
-				phis->sim->endgame++;
-				pthread_mutex_unlock(&phis->mutexes->stop_game);
+				phis_have_eaten(phis, i);
+				break ;
 			}
 			i++;
 		}
 	}
 }
 
-int	init_philos_threads(t_sim *sim)
+static int	init_philos_threads(t_sim *sim)
 {
 	t_phi				*phis;
 	long long			i;
+	char				*error_msg;
 
+	error_msg = "unsuccessful memory allocation and/or mutex init error\n";
 	phis = init_phi_struct(sim);
 	if (!phis)
-		return (display_error_msg("unsuccessful memory allocation\n"));
+		return (display_error_msg(error_msg));
 	i = 0;
 	while (i < sim->phi_num)
 	{
@@ -64,7 +78,7 @@ int	init_philos_threads(t_sim *sim)
 		pthread_join(*phis[i].thread_id, NULL);
 		i++;
 	}
-	return (leak_killing(sim, phis));
+	return (clean_program(phis));
 }
 
 int	main(int argc, char **argv)
