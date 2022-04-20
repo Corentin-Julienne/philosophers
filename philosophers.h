@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:00 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 19:08:14 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 16:30:06 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <limits.h>
 
 # define THINKING		0
 # define EATING			1
@@ -31,13 +32,14 @@
 
 typedef struct s_sim
 {
-	long long			phi_num;
-	long long			tt_die;
-	long long			tt_eat;
-	long long			tt_sleep;
-	long long			win_cond;
-	long long			win_num;
+	int					phi_num;
+	int					tt_die;
+	int					tt_eat;
+	int					tt_sleep;
+	int					win_cond;
+	int					win_num;
 	int					phis_init;
+	long long			start;
 	int					endgame;
 	pthread_t			*thread_ids;
 }						t_sim;
@@ -85,12 +87,17 @@ void				*philo_routine(void *arg);
 void				algo_phi_wait(t_phi *phi);
 int					is_dead(long long last_eat, long long tt_die);
 long long			get_time_now(void);
-int					philo_performing_task(long long duration, t_phi *phi);
+int					philo_performing_task(int duration, t_phi *phi);
 /* utils_1.c */
 int					ft_isdigit(char c);
 size_t				ft_strlen(const char *s);
 long long			calc_res(const char *str);
+char				*ft_protec_strdup(const char *s1);
 /* utils_2.c */
 char				*ft_lltoa(long long n);
+/* utils_3.c */
+size_t				ft_strlcat(char *dst, const char *src, size_t dstsize);
+char				*ft_strjoin_and_free(const char *s1, const char *s2);
+char				*ft_strjoin(char const *s1, char const *s2);
 
 #endif

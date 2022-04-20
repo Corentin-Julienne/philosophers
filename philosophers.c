@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:04 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 18:55:44 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 16:20:30 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,13 @@ static void	wait_for_endgame(t_phi *phis)
 	}
 }
 
+/* create phi structs :
+=> init all threads using pthread_create
+=> put sim->phis_init = 1 (allow simulation to start)
+=> use wait_for_endgame func to wait until end of sim
+=> join threads
+=> launch clean_program to suppress leaks and exit */
+
 static int	init_philos_threads(t_sim *sim)
 {
 	t_phi				*phis;
@@ -71,6 +78,7 @@ static int	init_philos_threads(t_sim *sim)
 		i++;
 	}
 	sim->phis_init = 1;
+	sim->start = get_time_now();
 	wait_for_endgame(phis);
 	i = 0;
 	while (i < sim->phi_num)
@@ -81,6 +89,8 @@ static int	init_philos_threads(t_sim *sim)
 	return (clean_program(phis));
 }
 
+/*  */
+
 int	main(int argc, char **argv)
 {
 	int			valid;
@@ -88,8 +98,8 @@ int	main(int argc, char **argv)
 
 	if (argc != 6 && argc != 5)
 		return (display_error_msg("wrong number of arguments\n"));
-	valid = check_args_validity(argc, argv);
-	if (valid == 1)
+	valid = check_args_validity(argc, argv); // yet to test
+	if (valid == 0)
 		return (display_error_msg("invalid argument format\n"));
 	sim = (t_sim *)malloc(sizeof(t_sim));
 	if (!sim)

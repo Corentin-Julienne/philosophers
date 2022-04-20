@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 13:19:47 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 18:40:46 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 13:32:33 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 void	init_sim_struct(t_sim *sim, char **argv, int argc)
 {
-	sim->phi_num = calc_res(argv[1]);
-	sim->tt_die = calc_res(argv[2]);
-	sim->tt_eat = calc_res(argv[3]);
-	sim->tt_sleep = calc_res(argv[4]);
+	sim->phi_num = (int)calc_res(argv[1]);
+	sim->tt_die = (int)calc_res(argv[2]);
+	sim->tt_eat = (int)calc_res(argv[3]);
+	sim->tt_sleep = (int)calc_res(argv[4]);
 	if (argc == 6)
-		sim->win_cond = calc_res(argv[5]);
+		sim->win_cond = (int)calc_res(argv[5]);
 	else
 		sim->win_cond = -1;
 	sim->win_num = 0;
@@ -84,7 +84,7 @@ t_phi	*init_phi_struct(t_sim *sim)
 	{
 		free(phis);
 		free(mutexes);
-		return (NULL); 
+		return (NULL);
 	}
 	setup_phis(phis, mutexes, sim);
 	return (phis);

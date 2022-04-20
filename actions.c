@@ -6,11 +6,15 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:33:02 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 19:07:24 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 13:07:17 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+/* die_alone is used when there is only one philosopher
+there is also one fork so philo cannot eat, 
+so he is starving to death. Sad. */
 
 static int	die_alone(t_phi *phi)
 {
@@ -22,12 +26,21 @@ static int	die_alone(t_phi *phi)
 	return (1);
 }
 
+/* allow a philosophers to release forks/mutexes
+in case of pb. So others phis can eat */
+
 static int	pb_release_forks(t_phi *phi)
 {
 	pthread_mutex_unlock(phi->r_fork);
 	pthread_mutex_unlock(phi->l_fork);
 	return (1);
 }
+
+/* use when a philosopher wanna eat 
+=> lock both forks/mutexes
+=> display msg "has taken a fork"
+=> update phi->last_eat 
+=> realease forks if display msg problem */
 
 static int	request_forks(t_phi *phi)
 {
@@ -48,10 +61,19 @@ static int	request_forks(t_phi *phi)
 	return (0);
 }
 
+/* in the eat/sleep procedure, a philo will :
+1) request forks 
+2) eat
+3) release forks
+4) add the total meal absorbed
+5) go to sleep and print sleeping msg
+6) wait while sleeping
+7) go thinking and print thinking msg */
+
 int	eat_sleep_procedure(t_phi *phi)
 {
 	if (phi->sim->phi_num == 1)
-		return (die_alone(phi));	
+		return (die_alone(phi));
 	if (request_forks(phi) != 0)
 		return (1);
 	if (philo_performing_task(phi->sim->tt_eat, phi) != 0)

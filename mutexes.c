@@ -6,16 +6,19 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:47:12 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 18:23:12 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 13:34:02 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+/* create an array of forks/mutexes (one by philo) 
+and init them */
+
 static pthread_mutex_t	*init_forks(t_sim *sim)
 {
 	pthread_mutex_t		*forks;
-	long long			i;
+	int					i;
 
 	forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
 			 * sim->phi_num);
@@ -26,13 +29,15 @@ static pthread_mutex_t	*init_forks(t_sim *sim)
 	{
 		if (pthread_mutex_init(&forks[i], NULL) != 0)
 		{
-			free(forks);
+			free(forks); // destroy forks to avoid leaks ?
 			return (NULL);
-		}	
+		}
 		i++;
 	}
 	return (forks);
 }
+
+/* init all the non-fok mutexes useful for the simulation */
 
 static int	init_mutexes(t_mutexes *mutexes)
 {

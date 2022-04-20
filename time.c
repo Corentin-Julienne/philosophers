@@ -6,26 +6,15 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 16:43:08 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 19:24:08 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 16:41:38 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-// static int	custom_usleep(long long duration)
+// void	custom_usleep()
 // {
-// 	if (duration < 1000000)
-// 	{
-// 		if (usleep(duration) != 0)
-// 			return (1);
-// 	}	
-// 	else
-// 	{
-// 		if (usleep(99999) != 0)
-// 			return (1);
-// 		custom_usleep(duration - 99999);
-// 	}
-// 	return (0);
+	
 // }
 
 int	is_dead(long long last_eat, long long tt_die)
@@ -36,11 +25,13 @@ int	is_dead(long long last_eat, long long tt_die)
 		return (0);
 }
 
-void	algo_phi_wait(t_phi *phi)
+void	algo_phi_wait(t_phi *phi) // change and complete this
 {
 	if (phi->id % 2 == 0)
 		usleep(phi->sim->tt_die);
 }
+
+/* used to get the current timestamp !!! unit is milliseconds !!! */
 
 long long	get_time_now(void)
 {
@@ -50,9 +41,9 @@ long long	get_time_now(void)
 	return ((timestamp.tv_sec * 1000) + (timestamp.tv_usec / 1000));
 }
 
-int	philo_performing_task(long long duration, t_phi *phi)
+int	philo_performing_task(int duration, t_phi *phi)
 {
-	long long	time;
+	long long			time;
 
 	time = get_time_now();
 	while ((get_time_now() < (time + duration)))

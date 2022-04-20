@@ -6,7 +6,7 @@
 #    By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/29 11:16:01 by cjulienn          #+#    #+#              #
-#    Updated: 2022/01/12 19:01:09 by cjulienn         ###   ########.fr        #
+#    Updated: 2022/04/19 20:02:46 by cjulienn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,8 @@ SRCS = ./actions.c \
 	   ./routine.c \
 	   ./time.c \
 	   ./utils_1.c \
-	   ./utils_2.c
+	   ./utils_2.c \
+	   ./utils_3.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -38,8 +39,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -lpthread -o $(NAME)
 	@echo $(NAME) successfully made !!!
 
-all: 
-	$(NAME)
+all: $(NAME)
 
 clean:
 	$(RM) $(OBJS)
@@ -47,6 +47,6 @@ clean:
 fclean:	clean
 	$(RM) $(NAME)
 
-re:	fclean $(NAME)
+re:	fclean all
 
 .PHONY: all clean fclean re
