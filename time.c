@@ -6,16 +6,28 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 16:43:08 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/04/20 16:41:38 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 17:59:30 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-// void	custom_usleep()
-// {
-	
-// }
+/* accurate usleep function
+features a loop of usleep(50) with verif after each iteration 
+!!! time in milliseconds !!!*/
+
+void	custom_usleep(long long time)
+{
+	long long		start;
+
+	start = get_time_now();
+	while (42)
+	{
+		if (get_time_now() - start >= time)
+			break ;
+		usleep(50);
+	}
+}
 
 int	is_dead(long long last_eat, long long tt_die)
 {
@@ -28,7 +40,7 @@ int	is_dead(long long last_eat, long long tt_die)
 void	algo_phi_wait(t_phi *phi) // change and complete this
 {
 	if (phi->id % 2 == 0)
-		usleep(phi->sim->tt_die);
+		custom_usleep(phi->sim->tt_die * 1000);
 }
 
 /* used to get the current timestamp !!! unit is milliseconds !!! */
@@ -64,7 +76,7 @@ int	philo_performing_task(int duration, t_phi *phi)
 			pthread_mutex_unlock(&phi->mutexes->stop_game);
 			return (1);
 		}
-		usleep(phi->sim->phi_num * 2); // keep that in place
+		custom_usleep(phi->sim->phi_num * 2); // keep that in place
 	}
 	return (0);
 }

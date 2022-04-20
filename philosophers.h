@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:15:00 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/04/20 16:30:06 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/20 17:47:36 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ t_mutexes			*init_mutexes_struct(t_sim *sim);
 /* routines */
 void				*philo_routine(void *arg);
 /* time.c */
+void				custom_usleep(long long time);
 void				algo_phi_wait(t_phi *phi);
 int					is_dead(long long last_eat, long long tt_die);
 long long			get_time_now(void);
