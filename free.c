@@ -6,11 +6,13 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 11:32:34 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/01/12 18:42:26 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/21 12:10:14 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+/* free all the mutexes when program exit without syscall failure */
 
 static void	rm_mutexes(t_phi *phis)
 {

@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/29 16:43:08 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/04/20 17:59:30 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/21 12:26:22 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 features a loop of usleep(50) with verif after each iteration 
 !!! time in milliseconds !!!*/
 
-void	custom_usleep(long long time)
+void	custom_usleep(long long time, t_sim *sim)
 {
 	long long		start;
 
 	start = get_time_now();
-	while (42)
+	while (!sim->endgame && !sim->win_cond)
 	{
 		if (get_time_now() - start >= time)
 			break ;
@@ -40,7 +40,7 @@ int	is_dead(long long last_eat, long long tt_die)
 void	algo_phi_wait(t_phi *phi) // change and complete this
 {
 	if (phi->id % 2 == 0)
-		custom_usleep(phi->sim->tt_die * 1000);
+		custom_usleep(phi->sim->tt_die * 1000, phi->sim);
 }
 
 /* used to get the current timestamp !!! unit is milliseconds !!! */
@@ -76,7 +76,7 @@ int	philo_performing_task(int duration, t_phi *phi)
 			pthread_mutex_unlock(&phi->mutexes->stop_game);
 			return (1);
 		}
-		custom_usleep(phi->sim->phi_num * 2); // keep that in place
+		custom_usleep((phi->sim->phi_num * 2) / 1000, phi->sim); // keep that in place
 	}
 	return (0);
 }

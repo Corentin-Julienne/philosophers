@@ -6,7 +6,7 @@
 /*   By: cjulienn <cjulienn@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 12:00:27 by cjulienn          #+#    #+#             */
-/*   Updated: 2022/04/20 17:58:07 by cjulienn         ###   ########.fr       */
+/*   Updated: 2022/04/21 12:12:54 by cjulienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ void	*philo_routine(void *arg)
 	phi = (t_phi *)arg;
 	res_func = 0;
 	while (phi->sim->phis_init == 0)
-		usleep(1);
+		usleep(50);
 	phi->last_eat = get_time_now();
-	algo_phi_wait(phi);
+	// algo_phi_wait(phi); // check this
 	while (!res_func)
 		res_func = eat_sleep_procedure(phi);
 	return (NULL);
